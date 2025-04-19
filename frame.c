@@ -15,11 +15,13 @@ frame_t *create_frame(Vector3 v, float phi) {
     return frame;
 }
 
-int add_sub_frame(frame_t *frame, frame_t *sub_frame) {
+void add_entity(frame_t *frame, void *entity, bool is_model) {
 
+    if (frame == NULL || entity == NULL) {
+        return;
+    }
 
-
-    return 0;
+    append(frame->entities, entity, is_model);
 }
 
 void destroy_frame(frame_t *frame) {

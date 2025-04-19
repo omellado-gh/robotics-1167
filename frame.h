@@ -6,6 +6,10 @@
 // a simple visual python frame implementation
 typedef struct Frame {
     Vector3 position;  // 3D coordinates
-    float rotation; // angle in degrees
+    float rotation; // angle in radians
     linked_list_t *entities; // list of models or sub_frames
 } frame_t;
+
+extern frame_t *create_frame(Vector3 v, float phi);
+extern void add_entity(frame_t *frame, void *entity, bool is_model);
+extern void destroy_frame(frame_t *frame);

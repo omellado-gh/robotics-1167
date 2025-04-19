@@ -29,7 +29,7 @@ node_t* create_node(void *data) {
     return new_node;
 }
 
-void append(linked_list_t *l, void *data) {
+void append(linked_list_t *l, void *data, bool is_model) {
     // l is a list
     if (l == NULL) {
         printf("List is NULL\n");
@@ -37,6 +37,7 @@ void append(linked_list_t *l, void *data) {
     }
     node_t* new_node = create_node(data);
     l->size++;
+    new_node->is_model = is_model;
     if (l->head == NULL) {
         l->head = new_node;
         l->tail = new_node;
@@ -46,55 +47,6 @@ void append(linked_list_t *l, void *data) {
     l->tail->next = new_node;
     new_node->prev = l->tail;
     l->tail = new_node;
-}
-
-// Function to insert a node at position
-void insert_at(linked_list_t *l, void *data, size_t position) {
-    if (l == NULL) {
-        printf("List is NULL\n");
-        return;
-    }
-    node_t* new_node = create_node(data);
-    l->size++;
-    if (l->head == NULL) {
-        l->head = new_node;
-        l->tail = new_node;
-        return;
-    }
-    if (position == 0) {
-        new_node->next = l->head;
-        l->head->prev = new_node;
-        l->head = new_node;
-        return;
-    }
-    if (position == l->size - 1) {
-        l->tail->next = new_node;
-        new_node->prev = l->tail;
-        l->tail = new_node;
-        return;
-    }
-    if (position == l->size) {
-        append(l, data);
-        return;
-    }
-
-    node_t* current = l->head;
-    // to know if head is more closer to the position
-    // than tail
-    if (position <= l->size / 2) {
-        for (size_t i = 0; i != position; i++)
-            current = current->next;
-    } else {
-        for (size_t i = l->size - 1; i != position; i--)
-            current = current->prev;
-    }
-    // current is the node at position
-    node_t *prev_node = current->prev;
-
-    prev_node->next = new_node;
-    new_node->prev = prev_node;
-    current->prev = new_node;
-    new_node->next = current;
 }
 
 void destroy_node(node_t *node) {

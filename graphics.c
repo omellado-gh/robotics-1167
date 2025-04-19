@@ -1,7 +1,8 @@
 #include "graphics.h"
+
 #include "config.h"
 
-#include <math.h>
+#include <raymath.h>
 
 void draw_background(Color *screen, Color color) {
     for (size_t x = 0; x < SCREEN_WIDTH; ++x) {
@@ -12,13 +13,13 @@ void draw_background(Color *screen, Color color) {
 }
 
 void draw_rectangle(Color *screen, rectangle_t rec, Color color) {
-    float angle = (float)rec.rotation * M_PI / 180.0; // Grados a radianes
+    float angle = rec.rotation * DEG2RAD; // Grados a radianes
     float cos_theta = cosf(angle);
     float sin_theta = sinf(angle);
 
     // Mitades del ancho y alto
-    float hw = (float)rec.width / 2.0;
-    float hh = (float)rec.height / 2.0;
+    float hw = (float)rec.width / 2.0f;
+    float hh = (float)rec.height / 2.0f;
 
     // 1. Calcular las esquinas rotadas (coordenadas absolutas)
     float corners[4][2] = {{-hw, -hh}, {hw, -hh}, {hw, hh}, {-hw, hh}};
@@ -49,8 +50,8 @@ void draw_rectangle(Color *screen, rectangle_t rec, Color color) {
 				continue;
 
             // Convertir a coordenadas relativas al centro
-            float dx = x - rec.x.x;
-            float dy = y - rec.x.y;
+            float dx = (float)x - rec.x.x;
+            float dy = (float)y - rec.x.y;
 
             // Aplicar rotación inversa (para mapear al rectángulo original)
             float orig_x = dx * cos_theta + dy * sin_theta;
@@ -62,4 +63,21 @@ void draw_rectangle(Color *screen, rectangle_t rec, Color color) {
             }
         }
     }
+}
+
+void draw_object(object_t object) {
+    object.model.transform = MatrixRotateXYZ(object.rotation);
+    DrawModel(object.model, object.position, 1.0f, object.color);
+}
+
+void draw_cube(cube_t cube) {
+    draw_object(cube.object);
+}
+
+void draw_cylinder(cylinder_t cylinder) {
+    draw_object(cylinder.object);
+}
+
+void draw_sphere(sphere_t sphere) {
+    draw_object(sphere.object);
 }
