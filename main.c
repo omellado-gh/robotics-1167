@@ -6,21 +6,41 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <raymath.h>
 
+void draw_world(Model *aro) {
+    // cancha
+    DrawCubeV((Vector3){ 0.0f, -0.05f, 0.0f }, (Vector3){18.0f, 0.03f, 10.0f}, RED);
+    DrawCubeV((Vector3){ 0.0f, -0.025f, 0.0f }, (Vector3){17.8f, 0.05f, 9.8f}, GRAY);
+    DrawPlane((Vector3){0.0f, 0.0001f, 0.0f}, (Vector2){0.03f, 9.8f}, WHITE);
+    DrawCylinder((Vector3){0.0f, -0.099f, 0.0f}, 0.5f, 0.5f, 0.1f, 32, RED);
+    DrawCylinder((Vector3){0.0f, -0.098f, 0.0f}, 0.2f, 0.5f, 0.1f, 32, WHITE);
+
+    // aros
+    DrawCubeV((Vector3){ 9.0f, 1.5f, 0.0f }, (Vector3){0.04f, 0.7f, 1.4f}, RED);
+    DrawCubeV((Vector3){ 9.0f, 0.6f, 0.0f }, (Vector3){0.03f, 1.2f, 0.06f}, WHITE);
+    DrawModel(*aro, (Vector3){ 8.74f, 1.3f, 0.0f }, 1.0f, WHITE);
+
+    DrawCubeV((Vector3){ -9.0f, 1.5f, 0.0f }, (Vector3){0.04f, 0.7f, 1.4f}, BLUE);
+    DrawCubeV((Vector3){ -9.0f, 0.6f, 0.0f }, (Vector3){0.03f, 1.2f, 0.06f}, WHITE);
+    DrawModel(*aro, (Vector3){ -8.74f, 1.3f, 0.0f }, 1.0f, WHITE);
+}
 
 int main() {
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Dron");
 
     Camera3D camera = { 0 };
+    // generar el modelo de un aro
+    Mesh aro = GenMeshTorus(0.001f, 0.5f, 32, 32);
+    Model aro_m = LoadModelFromMesh(aro);
+    aro_m.transform = MatrixRotateX(90.0f * DEG2RAD);
 
     camera.position = (Vector3){ 16.0f, 6.0f, 16.0f };
     camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };
     camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
-    camera.fovy = 100.0f;
+    camera.fovy = 80.0f;
     camera.projection = CAMERA_PERSPECTIVE;
-
-    int camera_mode = CAMERA_FIRST_PERSON;
 
     DisableCursor();
 
@@ -37,27 +57,24 @@ int main() {
 
         check_camera_collision(&camera);
 
-        UpdateCamera(&camera, camera_mode);
+        UpdateCamera(&camera, CAMERA_FIRST_PERSON);
 
         BeginDrawing();
 
-            ClearBackground(RAYWHITE);
+            ClearBackground(BLACK);
 
             BeginMode3D(camera);
 
-            DrawGrid(64, 1.0f);
-
-
+            draw_world(&aro_m);
 
             EndMode3D();
-
-            DrawRectangle(0, 0, 200, 100, WHITE);
 
             // Draw fps in the top right corner
             DrawFPS(SCREEN_WIDTH - 100, 10);
         EndDrawing();
     }
 
+    UnloadModel(aro_m);
     CloseWindow();
 
     return 0;
