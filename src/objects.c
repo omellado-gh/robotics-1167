@@ -1,4 +1,4 @@
-#include "objects.h"
+#include <objects.h>
 #include <stdlib.h>
 
 object_t create_object(Vector3 position, Vector3 rotation, Color color) {

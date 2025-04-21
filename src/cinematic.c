@@ -1,15 +1,15 @@
-#include "cinematic.h"
+#include <cinematic.h>
 #include <raymath.h>
 
-float get_w(size_t d, Vector2 x) {
-    return (x.x - x.y) / (float)d;
+float get_w(float d, Vector2 x) {
+    return (x.x - x.y) / d;
 }
 
 float get_diff_velocity(float velocity) {
     return velocity * GetFrameTime();
 }
 
-Vector3 get_v(Vector2 uv, size_t d, float phi) {
+Vector3 get_v(Vector2 uv, float d, float phi) {
     float angle = phi * DEG2RAD; // Grados a radianes
 	float add = uv.x + uv.y;
     return (Vector3){

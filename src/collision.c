@@ -1,5 +1,5 @@
-#include "collision.h"
-#include "config.h"
+#include <collision.h>
+#include <config.h>
 
 void check_camera_collision(Camera *camera) {
 

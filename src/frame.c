@@ -1,15 +1,15 @@
-#include "frame.h"
+#include <frame.h>
 
 #include <stdlib.h>
 
-frame_t *create_frame(Vector3 v, float phi) {
+frame_t *create_frame(Vector3 position, Vector3 rotation) {
     frame_t *frame = (frame_t *)malloc(sizeof(frame_t));
     if (frame == NULL) {
         return NULL;
     }
 
-    frame->position = v;
-    frame->rotation = phi;
+    frame->position = position;
+    frame->rotation = rotation;
     frame->entities = create_linked_list();
 
     return frame;

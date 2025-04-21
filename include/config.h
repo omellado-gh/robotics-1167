@@ -4,7 +4,9 @@
 
 #define WORLD_WIDTH 24
 #define WORLD_HEIGHT 32
+#define CANCHA_WIDTH 9.8f
+#define CANCHA_HEIGHT 17.8f
 
-#define N_ROBOTS 10
+#define N_ROBOTS_PER_TEAM 10
 
 #define BACKGROUND_COLOR WHITE

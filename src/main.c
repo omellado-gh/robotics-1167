@@ -1,8 +1,8 @@
-#include "dron.h"
-#include "config.h"
-#include "collision.h"
-#include "graphics.h"
-#include "cinematic.h"
+#include <robot.h>
+#include <config.h>
+#include <collision.h>
+#include <graphics.h>
+#include <cinematic.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,8 +10,8 @@
 
 void draw_world(Model *aro) {
     // cancha
-    DrawCubeV((Vector3){ 0.0f, -0.05f, 0.0f }, (Vector3){18.0f, 0.03f, 10.0f}, RED);
-    DrawCubeV((Vector3){ 0.0f, -0.025f, 0.0f }, (Vector3){17.8f, 0.05f, 9.8f}, GRAY);
+    DrawCubeV((Vector3){ 0.0f, -0.05f, 0.0f }, (Vector3){CANCHA_HEIGHT + 0.2f, 0.03f, CANCHA_WIDTH + 0.2f}, RED);
+    DrawCubeV((Vector3){ 0.0f, -0.025f, 0.0f }, (Vector3){CANCHA_HEIGHT, 0.05f, CANCHA_WIDTH}, GRAY);
     DrawPlane((Vector3){0.0f, 0.0001f, 0.0f}, (Vector2){0.03f, 9.8f}, WHITE);
     DrawCylinder((Vector3){0.0f, -0.099f, 0.0f}, 0.5f, 0.5f, 0.1f, 32, RED);
     DrawCylinder((Vector3){0.0f, -0.098f, 0.0f}, 0.2f, 0.5f, 0.1f, 32, WHITE);

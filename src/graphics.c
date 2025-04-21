@@ -1,6 +1,6 @@
-#include "graphics.h"
+#include <graphics.h>
 
-#include "config.h"
+#include <config.h>
 
 #include <raymath.h>
 
