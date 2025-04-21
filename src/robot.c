@@ -8,7 +8,7 @@
 #include <stdlib.h>
 
 
-uniciclo_t* create_robot(Vector3 pos, float d) {
+uniciclo_t* create_robot(Vector3 pos, float d, Color team) {
 
     uniciclo_t* robot = (uniciclo_t*)malloc(sizeof(uniciclo_t));
 
@@ -30,8 +30,6 @@ void delete_robot(uniciclo_t* robot) {
 }
 
 void restart_robot(uniciclo_t *robot) {
-    robot->obj->position = (Vector3){0.0f, 0.0f, 0.0f};
-    robot->obj->rotation = (Vector3){0.0f, 0.0f, 0.0f};
     robot->steps = 0;
     robot->w = 0;
 }
@@ -52,20 +50,20 @@ void move_robot(uniciclo_t *robot) {
     if (robot->steps == 0)
         restart_robot(robot);
 
-    if (robot->position.x <= -8.70) {
-        robot->position.x = -8.70;
-        robot->nStep = 0;
+    if (robot->position.x <= -8.7) {
+        robot->position.x = -8.7;
+        robot->steps = 0;
     }
-    if (robot->pos.x >= -0.50) {
-        robot->pos.x = -0.50;
-        robot->nStep = 0;
+    if (robot->pos.x >= -0.5) {
+        robot->pos.x = -0.5;
+        robot->steps = 0;
     }
-    if (robot->pos.z <= -4.70) {
-        robot->pos.z = -4.70;
-        robot->nStep = 0;
+    if (robot->pos.z <= -4.7) {
+        robot->pos.z = -4.7;
+        robot->steps = 0;
     }
-    if (robot->pos.z >= 4.70) {
-        robot->pos.z = 4.70;
-        robot->nStep = 0;
+    if (robot->pos.z >= 4.7) {
+        robot->pos.z = 4.7;
+        robot->steps = 0;
     }
 }
