@@ -1,11 +1,12 @@
 #include <robot.h>
+#include <random.h>
 #include <config.h>
 #include <collision.h>
 #include <graphics.h>
-#include <cinematic.h>
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <raymath.h>
 
 void draw_world(Model *aro) {
@@ -27,6 +28,7 @@ void draw_world(Model *aro) {
 }
 
 int main() {
+    srand((unsigned int)time(NULL));
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Dron");
 
@@ -48,11 +50,11 @@ int main() {
     while (!WindowShouldClose()) {
 
         if (IsKeyDown(KEY_SPACE)) {
-            camera.position.y += get_diff_velocity(2.0f);
+            camera.position.y += 2.0f * GetFrameTime();
         }
 
         if (IsKeyDown(KEY_LEFT_SHIFT)) {
-            camera.position.y -= get_diff_velocity(2.0f);
+            camera.position.y -= 2.0f * GetFrameTime();
         }
 
         check_camera_collision(&camera);

@@ -1,4 +1,6 @@
 #include <linked_list.h>
+#include <objects.h>
+#include <frame.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -51,7 +53,13 @@ void append(linked_list_t *l, void *data, bool is_model) {
 
 void destroy_node(node_t *node) {
     if (node == NULL) return;
-    if (node->data != NULL) free(node->data);
+    if (node->data == NULL && node->is_model) {
+        destroy_cube((cube_t *)node->data);
+        free(node->data);
+    } else {
+        destroy_frame((frame_t *)node->data);
+        free(node->data);
+    }
     free(node);
 }
 
