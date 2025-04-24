@@ -10,21 +10,21 @@
 bits del robot->collision_detected
       0: check collision
       1: if set collision up else collision down
-      2: if set collision left else collision right
+      2: if set collision right else collision left
 */
 
 #define CHECK_COLLISION (uint8_t)0
-#define COLLISION_Z     (uint8_t)1
-#define COLLISION_X     (uint8_t)2
+#define COLLISION_X     (uint8_t)1
+#define COLLISION_Z     (uint8_t)2
 
 #define SET_BIT(bit, pos) (uint8_t)((bit) | (1 << (pos)))
 #define UNSET_BIT(bit, pos) (uint8_t)((bit) & (~(1 << (pos))))
 #define CHECK_BIT(bit, pos) (uint8_t)(((bit) & (1 << (pos))) >> (pos))
 
-#define NO_COLLISION(bit) ((bit) = UNSET_BIT(bit, CHECK_COLLISION))
-#define COLLISION_UP(bit)    ((bit) |= (uint8_t)(SET_BIT(bit, COLLISION_X)   | SET_BIT(bit, CHECK_COLLISION)))
-#define COLLISION_RIGHT(bit) ((bit) |= (uint8_t)(SET_BIT(bit, COLLISION_Z)   | SET_BIT(bit, CHECK_COLLISION)))
+#define NO_COLLISION(bit) ((bit) &= (uint8_t)(~0x07))
+#define COLLISION_UP(bit)    ((bit) |= (uint8_t)(SET_BIT(  bit, COLLISION_X) | SET_BIT(bit, CHECK_COLLISION)))
 #define COLLISION_DOWN(bit)  ((bit) |= (uint8_t)(UNSET_BIT(bit, COLLISION_X) | SET_BIT(bit, CHECK_COLLISION)))
+#define COLLISION_RIGHT(bit) ((bit) |= (uint8_t)(SET_BIT(  bit, COLLISION_Z) | SET_BIT(bit, CHECK_COLLISION)))
 #define COLLISION_LEFT(bit)  ((bit) |= (uint8_t)(UNSET_BIT(bit, COLLISION_Z) | SET_BIT(bit, CHECK_COLLISION)))
 
 void generate_frame(frame_t *frame, Color team) {
@@ -51,6 +51,13 @@ void generate_frame(frame_t *frame, Color team) {
     add_entity(frame, cannon);
 }
 
+void restart_robot(uniciclo_t *robot, float start_angle, float end_angle) {
+    float new_angle = get_random_float(start_angle, end_angle) * DEG2RAD;
+    robot->steps = get_random_size_t(10, 200);
+    robot->w = (new_angle - robot->obj->rotation.y) / (float)robot->steps;
+    robot->vl = get_random_float(0.0f, 6.0f);
+}
+
 
 uniciclo_t* create_robot(Vector3 pos, Color team) {
 
@@ -67,19 +74,14 @@ uniciclo_t* create_robot(Vector3 pos, Color team) {
         .w = 0.0f
     };
 
+    restart_robot(robot, 0.0f, 360.0f);
+
     return robot;
 }
 
 void destroy_robot(uniciclo_t* robot) {
     destroy_frame(robot->obj);
     free(robot);
-}
-
-void restart_robot(uniciclo_t *robot) {
-    float new_angle = get_random_float(0.0f, 360.0f) * DEG2RAD;
-    robot->steps = get_random_size_t(10, 200);
-    robot->w = (new_angle - robot->obj->rotation.y) / (float)robot->steps;
-    robot->vl = get_random_float(0.0f, 6.0f);
 }
 
 
@@ -95,7 +97,7 @@ void move_robot(uniciclo_t *robot) {
     if ((robot->collision_detected & 0x01) == 0) {
         robot->steps -= 1;
         if (robot->steps == 0) {
-            restart_robot(robot);
+            restart_robot(robot, 0.0f, 360.0f);
             return;
         }
 
@@ -124,19 +126,28 @@ void move_robot(uniciclo_t *robot) {
         return;
     }
     // handle collision
-    printf("el robot colisiono \n");
     robot->vl = 0.0f;
 
+/*
+bits del robot->collision_detected
+      0: check collision
+      1: if set collision up else collision down
+      2: if set collision right else collision left
+*/
     switch (CHECK_BIT(robot->collision_detected, COLLISION_X)) {
         case 0:
+            printf("el robot colisiono abajo\n");
             break;
         case 1:
+            printf("el robot colisiono arriba\n");
             break;
     }
     switch (CHECK_BIT(robot->collision_detected, COLLISION_Z)) {
         case 0:
+            printf("el robot colisiono a la izquierda\n");
             break;
         case 1:
+            printf("el robot colisiono a la derecha\n");
             break;
     }
 

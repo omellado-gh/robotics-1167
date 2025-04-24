@@ -15,6 +15,5 @@ typedef struct RobotUniciclo {
 
 extern uniciclo_t* create_robot(Vector3 pos, Color team);
 extern void destroy_robot(uniciclo_t* robot);
-extern void restart_robot(uniciclo_t* robot);
 extern void move_robot(uniciclo_t* robot);
 extern void draw_robot(uniciclo_t *robot);

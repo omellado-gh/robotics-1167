@@ -48,13 +48,10 @@ int main() {
     camera.projection = CAMERA_PERSPECTIVE;
 
     uniciclo_t **robots_red = (uniciclo_t **)malloc(sizeof(uniciclo_t *) * N_ROBOTS_PER_TEAM);
-    uniciclo_t **robots_blue = (uniciclo_t **)malloc(sizeof(uniciclo_t *) * N_ROBOTS_PER_TEAM);
+    // uniciclo_t **robots_blue = (uniciclo_t **)malloc(sizeof(uniciclo_t *) * N_ROBOTS_PER_TEAM);
     for (size_t i = 0; i < N_ROBOTS_PER_TEAM; i++) {
         robots_red[i] = create_robot((Vector3){0.0f, 0.0f, 0.0f}, RED);
-        robots_blue[i] = create_robot((Vector3){0.0f, 0.0f, 0.0f}, BLUE);
-        
-        restart_robot(robots_red[i]);
-        restart_robot(robots_blue[i]);
+        // robots_blue[i] = create_robot((Vector3){0.0f, 0.0f, 0.0f}, BLUE);
     }
 
     DisableCursor();
@@ -74,7 +71,7 @@ int main() {
 
         for (size_t i = 0; i < N_ROBOTS_PER_TEAM; i++) {
             move_robot(robots_red[i]);
-            move_robot(robots_blue[i]);
+            // move_robot(robots_blue[i]);
         }
 
         UpdateCamera(&camera, CAMERA_FIRST_PERSON);
@@ -88,7 +85,7 @@ int main() {
 
             for (size_t i = 0; i < N_ROBOTS_PER_TEAM; i++) {
                 draw_robot(robots_red[i]);
-                draw_robot(robots_blue[i]);
+                // draw_robot(robots_blue[i]);
             }
 
             EndMode3D();
@@ -100,11 +97,11 @@ int main() {
 
     for (size_t i = 0; i < N_ROBOTS_PER_TEAM; i++) {
         destroy_robot(robots_red[i]);
-        destroy_robot(robots_blue[i]);
+        // destroy_robot(robots_blue[i]);
     }
 
     free(robots_red);
-    free(robots_blue);
+    // free(robots_blue);
 
     UnloadModel(aro_m);
     CloseWindow();
