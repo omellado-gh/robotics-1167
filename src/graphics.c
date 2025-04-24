@@ -66,7 +66,7 @@ void draw_rectangle(Color *screen, rectangle_t rec, Color color) {
 }
 
 void draw_object(object_t object) {
-    object.model.transform = MatrixRotateXYZ(object.rotation);
+    object.model.transform = MatrixMultiply(MatrixRotateXYZ(object.rotation), object.model.transform);
     DrawModel(object.model, object.position, 1.0f, object.color);
 }
 

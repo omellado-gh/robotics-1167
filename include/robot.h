@@ -2,15 +2,19 @@
 
 #include <raylib.h>
 #include <stdio.h>
+#include <stdint.h>
 
 typedef struct RobotUniciclo {
     frame_t *obj;
     float w;
     float vl;
     size_t steps;
+    uint8_t collision_detected;
     Color team;
 } uniciclo_t;
 
 extern uniciclo_t* create_robot(Vector3 pos, Color team);
-extern void delete_robot(uniciclo_t* robot);
+extern void destroy_robot(uniciclo_t* robot);
+extern void restart_robot(uniciclo_t* robot);
 extern void move_robot(uniciclo_t* robot);
+extern void draw_robot(uniciclo_t *robot);

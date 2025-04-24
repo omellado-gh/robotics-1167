@@ -8,19 +8,21 @@ typedef struct _Object {
 } object_t;
 
 typedef struct _Cube {
-    Vector3 size;
     object_t object;
+    Vector3 size;
 } cube_t;
 
 typedef struct _Sphere {
-    float radius;
     object_t object;
+    float radius;
+    void *padding_;
 } sphere_t;
 
 typedef struct _Cylinder {
+    object_t object;
     float radius;
     float height;
-    object_t object;
+    void *padding_;
 } cylinder_t;
 
 extern cube_t *create_cube(Vector3 size, Vector3 position, Vector3 rotation, Color color);

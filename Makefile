@@ -12,10 +12,10 @@ SRCS = $(wildcard $(SRC_DIR)/*.c)
 INCLUDES = $(wildcard $(INCLUDE_DIR)/*.h)
 OBJS = $(patsubst $(SRC_DIR)/%.c,$(BUILD_DIR)/%.o,$(SRCS))
 
-main: $(OBJS)
+main: $(OBJS) all
 	$(CC) $(LDFLAGS) $(OBJS) $(LIBS) -o $@
 
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c clean
 	@mkdir -p $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c -I$(INCLUDE_DIR) $< -o $@
 

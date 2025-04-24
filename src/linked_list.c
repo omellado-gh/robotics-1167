@@ -1,6 +1,5 @@
 #include <linked_list.h>
 #include <objects.h>
-#include <frame.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -31,7 +30,7 @@ node_t* create_node(void *data) {
     return new_node;
 }
 
-void append(linked_list_t *l, void *data, bool is_model) {
+void append(linked_list_t *l, void *data) {
     // l is a list
     if (l == NULL) {
         printf("List is NULL\n");
@@ -39,7 +38,6 @@ void append(linked_list_t *l, void *data, bool is_model) {
     }
     node_t* new_node = create_node(data);
     l->size++;
-    new_node->is_model = is_model;
     if (l->head == NULL) {
         l->head = new_node;
         l->tail = new_node;
@@ -51,15 +49,27 @@ void append(linked_list_t *l, void *data, bool is_model) {
     l->tail = new_node;
 }
 
+void **get_array(linked_list_t *list) {
+    void **array = (void **)malloc(sizeof(void *) * list->size);
+
+    node_t *current = list->head;
+
+    size_t i = 0;
+    while (current != NULL) {
+        array[i] = current->data;
+        i++;
+        current = current->next;
+    }
+
+    return array;
+}
+
 void destroy_node(node_t *node) {
     if (node == NULL) return;
-    if (node->data == NULL && node->is_model) {
+    if (node->data != NULL) {
         destroy_cube((cube_t *)node->data);
-        free(node->data);
-    } else {
-        destroy_frame((frame_t *)node->data);
-        free(node->data);
     }
+
     free(node);
 }
 
