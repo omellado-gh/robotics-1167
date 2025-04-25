@@ -41,7 +41,7 @@ int main() {
     Model aro_m = LoadModelFromMesh(aro);
     aro_m.transform = MatrixRotateX(90.0f * DEG2RAD);
 
-    camera.position = (Vector3){ 10.0f, 0.0f, 10.0f };
+    camera.position = (Vector3){ 0.0f, 6.0f, 10.0f };
     camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };
     camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
     camera.fovy = 80.0f;
@@ -73,9 +73,8 @@ int main() {
             move_robot(robots_red[i]);
     //         move_robot(robots_blue[i]);
         }
-        printf("rotation: %f\n", robots_red[0]->obj->rotation.y * RAD2DEG);
 
-        UpdateCamera(&camera, CAMERA_FIRST_PERSON);
+        // UpdateCamera(&camera, CAMERA_FIRST_PERSON);
 
         BeginDrawing();
 

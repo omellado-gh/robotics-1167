@@ -31,18 +31,23 @@ void generate_frame(frame_t *frame, Color team) {
     add_entity(frame, cannon);
 }
 
-void restart_robot(uniciclo_t *robot, float start_angle, float end_angle) {
+float get_angle_diff(float current_angle, float new_angle) {
+    current_angle += ((2 * PI) * (float)(current_angle < 0)) - ((2 * PI) * (float)(current_angle > 2 * PI));
 
-    float new_angle = get_random_float(start_angle * DEG2RAD, end_angle * DEG2RAD);
     if (new_angle > PI) new_angle -= 2 * PI;
 
-    // 2. Calcular diferencia de ángulo más corta (considerando wraparound)
-    float current_angle = *(robot->y_rotation);
     float angle_diff = new_angle - current_angle;
     
     // Ajustar para tomar el camino más corto (ej: 350° -> 10° debe ser -20°, no +340°)
     if (angle_diff > PI) angle_diff -= 2 * PI;
     else if (angle_diff < -PI) angle_diff += 2 * PI;
+
+    return angle_diff;
+}
+
+void restart_robot(uniciclo_t *robot, float start_angle, float end_angle) {
+    float new_angle = get_random_float(start_angle * DEG2RAD, end_angle * DEG2RAD);
+    float angle_diff = get_angle_diff(*(robot->y_rotation), new_angle);
 
     robot->steps = get_random_size_t(10, 200);
     robot->w = angle_diff / (float)robot->steps;
@@ -66,11 +71,11 @@ uniciclo_t* create_robot(Vector3 pos, Color team) {
         .w = 0.0f
     };
 
-    // restart_robot(robot, 0.0f, 360.0f);
+    restart_robot(robot, 0.0f, 360.0f);
 
-    robot->vl = 2.0f;
-    *(robot->y_rotation) = 271.0f * DEG2RAD;
-    robot->steps = (size_t)0xFFFFFFFFFFFFFFFF;
+    // robot->vl = 2.0f;
+    // *(robot->y_rotation) = 271.0f * DEG2RAD;
+    // robot->steps = (size_t)0xFFFFFFFFFFFFFFFF;
 
     return robot;
 }
@@ -101,11 +106,11 @@ void move_robot(uniciclo_t *robot) {
         return;
     }
 
-    robot->obj->rotation.y += robot->w;
-    robot->obj->rotation.y = fmodf(robot->obj->rotation.y, 2 * PI);
+    *(robot->y_rotation) += robot->w;
+    *(robot->y_rotation) += ((2 * PI) * (float)(*(robot->y_rotation) < 0)) - ((2 * PI) * (float)(*(robot->y_rotation) > 2 * PI));
 
-    robot->obj->position.x += robot->vl * sinf(robot->obj->rotation.y) * GetFrameTime();
-    robot->obj->position.z += robot->vl * cosf(robot->obj->rotation.y) * GetFrameTime();
+    robot->obj->position.x += robot->vl * sinf(*(robot->y_rotation)) * GetFrameTime();
+    robot->obj->position.z += robot->vl * cosf(*(robot->y_rotation)) * GetFrameTime();
 
 
     if (robot->obj->position.x <= -8.7f) {

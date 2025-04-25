@@ -43,9 +43,8 @@ bits del robot->collision_detected
       6: finish rotation
 */
     if (CHECK_BIT(robot->collision, ROTATING)) {
-        if (*(robot->y_rotation) < 0) *(robot->y_rotation) += 2 * PI;
-        if (fabsf(robot->y_rotation_expected - robot->obj->rotation.y) > 1.0f) {
-            // printf("Girando el robot, orientación: %f, orientación esperada: %f\n", robot->obj->rotation.y, robot->y_rotation_expected);
+        *(robot->y_rotation) += ((2 * PI) * (float)(*(robot->y_rotation) < 0)) - ((2 * PI) * (float)(*(robot->y_rotation) > 2 * PI));
+        if (fabsf(robot->y_rotation_expected - robot->obj->rotation.y) > 0.1f) {
             *(robot->y_rotation) += robot->w * 5.0f * GetFrameTime();
             return;
         }
@@ -53,10 +52,9 @@ bits del robot->collision_detected
         NO_COLLISION(robot->collision);
         robot->vl = 3.0f;
         robot->w = 0.0f;
-        robot->steps = 200;
+        robot->steps = 50;
         return;
     }
-
 
     float new_angle = 0.0f;
 
@@ -72,19 +70,7 @@ bits del robot->collision_detected
 
     robot->y_rotation_expected = new_angle;
 
-    if (new_angle > PI) new_angle -= 2 * PI;
-
-    if (*(robot->y_rotation) < 0) *(robot->y_rotation) += 2 * PI;
-    printf("robot->y_rotation: %f, new_angle: %f,", *(robot->y_rotation) * RAD2DEG, new_angle * RAD2DEG);
-
-    // 2. Calcular diferencia de ángulo más corta (considerando wraparound)
-    float angle_diff = new_angle - *(robot->y_rotation);
-    
-    // Ajustar para tomar el camino más corto (ej: 350° -> 10° debe ser -20°, no +340°)
-    if (angle_diff > PI) angle_diff -= 2 * PI;
-    else if (angle_diff < -PI) angle_diff += 2 * PI;
-
-    printf(", angle_diff: %f\n", angle_diff * RAD2DEG);
+    float angle_diff = get_angle_diff(*(robot->y_rotation), new_angle);
 
     robot->w = angle_diff / fabsf(angle_diff);
 }
