@@ -1,3 +1,6 @@
+#ifndef OBJECTS_H
+#define OBJECTS_H
+
 #include <raylib.h>
 
 typedef struct _Object {
@@ -32,3 +35,5 @@ extern cylinder_t *create_cylinder(float radius, float height, Vector3 position,
 extern void destroy_cube(cube_t *cube);
 extern void destroy_sphere(sphere_t *sphere);
 extern void destroy_cylinder(cylinder_t *cylinder);
+
+#endif

@@ -1,3 +1,6 @@
+#ifndef LINKED_LIST_H
+#define LINKED_LIST_H
+
 #include <stdio.h>
 #include <stdbool.h>
 
@@ -22,3 +25,5 @@ extern void **get_array(linked_list_t *list);
 // extern void insert_at(linked_list_t *l, void *data, size_t position);
 extern void delete_at(linked_list_t* l, size_t position);
 extern void destroy_linked_list(linked_list_t* l);
+
+#endif

@@ -1,3 +1,6 @@
+#ifndef GRAPHICS_H
+#define GRAPHICS_H
+
 #include <stdio.h>
 #include <objects.h>
 #include <raylib.h>
@@ -15,3 +18,5 @@ extern void draw_sphere(sphere_t sphere);
 
 extern void draw_rectangle(Color *screen, rectangle_t rec, Color color);
 extern void draw_background(Color *screen, Color color);
+
+#endif
