@@ -24,11 +24,12 @@ bits del robot->collision_detected
 #define ROTATING          (uint8_t)5
 #define FINISH_ROTATION   (uint8_t)6
 
-#define SET_BIT(bit, pos) (uint8_t)((bit) | (1 << (pos)))
+#define SET_BIT(  bit, pos) (uint8_t)((bit) | (1 << (pos)))
 #define UNSET_BIT(bit, pos) (uint8_t)((bit) & (~(1 << (pos))))
 #define CHECK_BIT(bit, pos) (uint8_t)(((bit) & (1 << (pos))) >> (pos))
 
 #define NO_COLLISION(bit)    ((bit) &= (uint8_t)(0x00))
+#define SET_ROTATING(bit)    ((bit) |= (uint8_t)(SET_BIT(bit, ROTATING)))
 #define COLLISION_UP(bit)    ((bit) |= (uint8_t)((SET_BIT(  bit, COLLISION_X)) | (SET_BIT(bit, CHECK_COLLISION)) | (SET_BIT(bit, CHECK_COLLISION_X))))
 #define COLLISION_DOWN(bit)  ((bit) |= (uint8_t)((UNSET_BIT(bit, COLLISION_X)) | (SET_BIT(bit, CHECK_COLLISION)) | (SET_BIT(bit, CHECK_COLLISION_X))))
 #define COLLISION_RIGHT(bit) ((bit) |= (uint8_t)((SET_BIT(  bit, COLLISION_Z)) | (SET_BIT(bit, CHECK_COLLISION)) | (SET_BIT(bit, CHECK_COLLISION_Z))))

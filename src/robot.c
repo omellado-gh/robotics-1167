@@ -37,10 +37,10 @@ void restart_robot(uniciclo_t *robot, float start_angle, float end_angle) {
     if (new_angle > PI) new_angle -= 2 * PI;
 
     // 2. Calcular diferencia de ángulo más corta (considerando wraparound)
-    float current_angle = robot->obj->rotation.y;
+    float current_angle = *(robot->y_rotation);
     float angle_diff = new_angle - current_angle;
     
-    // Ajustar para tomar el camino más corto (ej: 350° → 10° debe ser -20°, no +340°)
+    // Ajustar para tomar el camino más corto (ej: 350° -> 10° debe ser -20°, no +340°)
     if (angle_diff > PI) angle_diff -= 2 * PI;
     else if (angle_diff < -PI) angle_diff += 2 * PI;
 
@@ -61,11 +61,16 @@ uniciclo_t* create_robot(Vector3 pos, Color team) {
         .vl = 0.0f,
         .steps = 0,
         .team = team,
+        .y_rotation = &frame->rotation.y,
         .collision = 0,
         .w = 0.0f
     };
 
-    restart_robot(robot, 0.0f, 360.0f);
+    // restart_robot(robot, 0.0f, 360.0f);
+
+    robot->vl = 2.0f;
+    *(robot->y_rotation) = 271.0f * DEG2RAD;
+    robot->steps = (size_t)0xFFFFFFFFFFFFFFFF;
 
     return robot;
 }
@@ -97,6 +102,7 @@ void move_robot(uniciclo_t *robot) {
     }
 
     robot->obj->rotation.y += robot->w;
+    robot->obj->rotation.y = fmodf(robot->obj->rotation.y, 2 * PI);
 
     robot->obj->position.x += robot->vl * sinf(robot->obj->rotation.y) * GetFrameTime();
     robot->obj->position.z += robot->vl * cosf(robot->obj->rotation.y) * GetFrameTime();

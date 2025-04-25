@@ -51,7 +51,7 @@ int main() {
     // uniciclo_t **robots_blue = (uniciclo_t **)malloc(sizeof(uniciclo_t *) * N_ROBOTS_PER_TEAM);
     for (size_t i = 0; i < N_ROBOTS_PER_TEAM; i++) {
         robots_red[i] = create_robot((Vector3){0.0f, 0.0f, 0.0f}, RED);
-        // robots_blue[i] = create_robot((Vector3){0.0f, 0.0f, 0.0f}, BLUE);
+    //     robots_blue[i] = create_robot((Vector3){0.0f, 0.0f, 0.0f}, BLUE);
     }
 
     DisableCursor();
@@ -71,8 +71,9 @@ int main() {
 
         for (size_t i = 0; i < N_ROBOTS_PER_TEAM; i++) {
             move_robot(robots_red[i]);
-            // move_robot(robots_blue[i]);
+    //         move_robot(robots_blue[i]);
         }
+        printf("rotation: %f\n", robots_red[0]->obj->rotation.y * RAD2DEG);
 
         UpdateCamera(&camera, CAMERA_FIRST_PERSON);
 
@@ -85,7 +86,7 @@ int main() {
 
             for (size_t i = 0; i < N_ROBOTS_PER_TEAM; i++) {
                 draw_robot(robots_red[i]);
-                // draw_robot(robots_blue[i]);
+    //             draw_robot(robots_blue[i]);
             }
 
             EndMode3D();
@@ -97,7 +98,7 @@ int main() {
 
     for (size_t i = 0; i < N_ROBOTS_PER_TEAM; i++) {
         destroy_robot(robots_red[i]);
-        // destroy_robot(robots_blue[i]);
+    //    destroy_robot(robots_blue[i]);
     }
 
     free(robots_red);

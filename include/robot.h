@@ -10,6 +10,8 @@
 typedef struct RobotUniciclo {
     frame_t *obj;
     float w;
+    float *y_rotation;
+    float y_rotation_expected;
     float vl;
     size_t steps;
     uint8_t collision;
