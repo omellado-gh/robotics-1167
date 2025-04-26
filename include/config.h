@@ -10,7 +10,7 @@
 #define CANCHA_WIDTH 9.8f
 #define CANCHA_HEIGHT 17.8f
 
-#define N_ROBOTS_PER_TEAM 1
+#define N_ROBOTS_PER_TEAM 100
 
 #define BACKGROUND_COLOR WHITE
 

@@ -74,7 +74,7 @@ uniciclo_t* create_robot(Vector3 pos, Color team) {
     restart_robot(robot, 0.0f, 360.0f);
 
     // robot->vl = 2.0f;
-    // *(robot->y_rotation) = 271.0f * DEG2RAD;
+    // *(robot->y_rotation) = 89.0f * DEG2RAD;
     // robot->steps = (size_t)0xFFFFFFFFFFFFFFFF;
 
     return robot;
@@ -93,7 +93,21 @@ void draw_robot(uniciclo_t *robot) {
     draw_frame(robot->obj);
 }
 
+void rotate_robot(uniciclo_t *robot) {
+    float y_rotation = *(robot->y_rotation);
+    y_rotation += robot->w;
+
+    if (y_rotation > 2 * PI) y_rotation -= 2 * PI;
+    else if (y_rotation < 0.0f) y_rotation += 2 * PI;
+
+    *(robot->y_rotation) = y_rotation;
+}
+
 void move_robot(uniciclo_t *robot) {
+
+    float y_rotation = *(robot->y_rotation);
+    float *x = &robot->obj->position.x;
+    float *z = &robot->obj->position.z;
 
     if (robot->collision & 0x01) {
         handle_robot_collision(robot);
@@ -106,27 +120,33 @@ void move_robot(uniciclo_t *robot) {
         return;
     }
 
-    *(robot->y_rotation) += robot->w;
-    *(robot->y_rotation) += ((2 * PI) * (float)(*(robot->y_rotation) < 0)) - ((2 * PI) * (float)(*(robot->y_rotation) > 2 * PI));
+    float velocity = robot->vl * GetFrameTime();
 
-    robot->obj->position.x += robot->vl * sinf(*(robot->y_rotation)) * GetFrameTime();
-    robot->obj->position.z += robot->vl * cosf(*(robot->y_rotation)) * GetFrameTime();
+    *x += velocity * sinf(y_rotation);
+    *z += velocity * cosf(y_rotation);
 
-
-    if (robot->obj->position.x <= -8.7f) {
-        robot->obj->position.x = -8.7f;
+    if (*x <= -8.7f) {
+        *x = -8.7f;
         COLLISION_DOWN(robot->collision);
     }
-    if (robot->obj->position.x >= 8.7f) {
-        robot->obj->position.x = 8.7f;
+    if (*x >= 8.7f) {
+        *x = 8.7f;
         COLLISION_UP(robot->collision);
     }
-    if (robot->obj->position.z <= -4.7f) {
-        robot->obj->position.z = -4.7f;
+    if (*z <= -4.7f) {
+        *z = -4.7f;
         COLLISION_LEFT(robot->collision);
     }
-    if (robot->obj->position.z >= 4.7f) {
-        robot->obj->position.z = 4.7f;
+    if (*z >= 4.7f) {
+        *z = 4.7f;
         COLLISION_RIGHT(robot->collision);
     }
+}
+
+void update_robot(uniciclo_t *robot) {
+    if (robot == NULL || robot->obj == NULL)
+        return;
+
+    rotate_robot(robot);
+    move_robot(robot);
 }

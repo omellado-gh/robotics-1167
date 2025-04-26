@@ -20,9 +20,10 @@ typedef struct RobotUniciclo {
 
 extern uniciclo_t* create_robot(Vector3 pos, Color team);
 extern void destroy_robot(uniciclo_t* robot);
+extern void update_robot(uniciclo_t* robot);
+extern void rotate_robot(uniciclo_t* robot);
 extern void move_robot(uniciclo_t* robot);
 extern void draw_robot(uniciclo_t *robot);
 extern float get_angle_diff(float current_angle, float new_angle);
-
 
 #endif

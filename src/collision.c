@@ -45,7 +45,7 @@ bits del robot->collision_detected
     if (CHECK_BIT(robot->collision, ROTATING)) {
         *(robot->y_rotation) += ((2 * PI) * (float)(*(robot->y_rotation) < 0)) - ((2 * PI) * (float)(*(robot->y_rotation) > 2 * PI));
         if (fabsf(robot->y_rotation_expected - robot->obj->rotation.y) > 0.1f) {
-            *(robot->y_rotation) += robot->w * 5.0f * GetFrameTime();
+            rotate_robot(robot);
             return;
         }
         *(robot->y_rotation) = robot->y_rotation_expected;
@@ -72,5 +72,5 @@ bits del robot->collision_detected
 
     float angle_diff = get_angle_diff(*(robot->y_rotation), new_angle);
 
-    robot->w = angle_diff / fabsf(angle_diff);
+    robot->w = (angle_diff / fabsf(angle_diff)) * 5.0f * GetFrameTime();
 }
