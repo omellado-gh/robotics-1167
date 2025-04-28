@@ -31,25 +31,28 @@ void check_camera_collision(Camera *camera) {
 }
 
 void handle_robot_collision(uniciclo_t *robot) {
+    if (CHECK_BIT(robot->config, SHOOTING)) return;
     robot->vl = 0.0f;
 /*
-bits del robot->collision_detected
+bits del robot->config
       0: check collision
       1: if set collision up else collision down
       2: if set collision right else collision left
       3: check collision X
       4: check collision Z
       5: set if is rotating
-      6: finish rotation
+      6: set if is shooting
 */
-    if (CHECK_BIT(robot->collision, ROTATING)) {
-        *(robot->y_rotation) += ((2 * PI) * (float)(*(robot->y_rotation) < 0)) - ((2 * PI) * (float)(*(robot->y_rotation) > 2 * PI));
-        if (fabsf(robot->y_rotation_expected - robot->obj->rotation.y) > 0.1f) {
-            rotate_robot(robot);
+    if (CHECK_BIT(robot->config, ROTATING)) {
+        float y_rotation = *(robot->y_rotation);
+        if (y_rotation < 0)      y_rotation += 2 * PI;
+        if (y_rotation > 2 * PI) y_rotation -= 2 * PI;
+
+        if (fabsf(robot->y_rotation_expected - y_rotation) > 0.1f)
             return;
-        }
         *(robot->y_rotation) = robot->y_rotation_expected;
-        NO_COLLISION(robot->collision);
+        robot->y_rotation_expected = -1.0f;
+        NO_COLLISION(robot->config);
         robot->vl = 3.0f;
         robot->w = 0.0f;
         robot->steps = 50;
@@ -58,15 +61,18 @@ bits del robot->collision_detected
 
     float new_angle = 0.0f;
 
-    if (CHECK_BIT(robot->collision, CHECK_COLLISION_X)) {
-        uint8_t sense = CHECK_BIT(robot->collision, COLLISION_X);
-        new_angle = ((270.0f * (float)sense) + (90.0f * (float)((~sense) & 0x01))) * DEG2RAD;
+    if (CHECK_BIT(robot->config, CHECK_COLLISION_X)) {
+        uint8_t sense = CHECK_BIT(robot->config, COLLISION_X);
+        if (sense) new_angle = 270.0f;
+        else       new_angle = 90.0f;
     }
-    if (CHECK_BIT(robot->collision, CHECK_COLLISION_Z)) {
-        uint8_t sense = CHECK_BIT(robot->collision, COLLISION_Z);
-        new_angle = ((180.0f * (float)sense) + (0.0f * (float)((~sense) & 0x01))) * DEG2RAD;
+    if (CHECK_BIT(robot->config, CHECK_COLLISION_Z)) {
+        uint8_t sense = CHECK_BIT(robot->config, COLLISION_Z);
+        if (sense) new_angle = 180.0f;
+        else       new_angle = 0.0f;
     }
-    SET_ROTATING(robot->collision);
+    new_angle *= DEG2RAD; // se convierte a radianes
+    SET_ROTATING(robot->config);
 
     robot->y_rotation_expected = new_angle;
 

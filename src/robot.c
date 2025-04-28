@@ -3,6 +3,7 @@
 #include <random.h>
 #include <objects.h>
 #include <collision.h>
+#include <utils.h>
 
 #include <raymath.h>
 #include <stdlib.h>
@@ -31,43 +32,37 @@ void generate_frame(frame_t *frame, Color team) {
     add_entity(frame, cannon);
 }
 
-float get_angle_diff(float current_angle, float new_angle) {
-    current_angle += ((2 * PI) * (float)(current_angle < 0)) - ((2 * PI) * (float)(current_angle > 2 * PI));
-
-    if (new_angle > PI) new_angle -= 2 * PI;
-
-    float angle_diff = new_angle - current_angle;
-    
-    // Ajustar para tomar el camino más corto (ej: 350° -> 10° debe ser -20°, no +340°)
-    if (angle_diff > PI) angle_diff -= 2 * PI;
-    else if (angle_diff < -PI) angle_diff += 2 * PI;
-
-    return angle_diff;
-}
-
 void restart_robot(uniciclo_t *robot, float start_angle, float end_angle) {
     float new_angle = get_random_float(start_angle * DEG2RAD, end_angle * DEG2RAD);
     float angle_diff = get_angle_diff(*(robot->y_rotation), new_angle);
 
     robot->steps = get_random_size_t(10, 200);
     robot->w = angle_diff / (float)robot->steps;
-    robot->vl = get_random_float(0.0f, 6.0f);
+    robot->vl = get_random_float(0.0f, 6.0f) * GetFrameTime();
 }
 
 
-uniciclo_t* create_robot(Vector3 pos, Color team) {
+uniciclo_t* create_robot(Vector3 pos, Color color) {
 
     uniciclo_t* robot = (uniciclo_t*)malloc(sizeof(uniciclo_t));
 
+    bool team = color.r == RED.r && color.g == RED.g && color.b == RED.b;
+    Vector3 target = { 0 };
+    if (team) target = POS_RING_BLUE;
+    else target = POS_RING_RED;
     frame_t *frame = create_frame(pos, (Vector3){0.0f, 0.0f, 0.0f});
-    generate_frame(frame, team);
+    generate_frame(frame, color);
     *robot = (uniciclo_t) {
         .obj = frame,
         .vl = 0.0f,
         .steps = 0,
-        .team = team,
+        .team = color,
         .y_rotation = &frame->rotation.y,
-        .collision = 0,
+        .y_rotation_expected = -1.0f,
+        .time_to_shot = get_random_float(5.0f, 10.0f),
+        .wait_for_shot = WAIT_TIME_FOR_SHOT,
+        .target = target,
+        .config = 0,
         .w = 0.0f
     };
 
@@ -104,15 +99,12 @@ void rotate_robot(uniciclo_t *robot) {
 }
 
 void move_robot(uniciclo_t *robot) {
+    if (CHECK_BIT(robot->config, SHOOTING)) return;
+    if (CHECK_BIT(robot->config, COLLISION)) return;
 
     float y_rotation = *(robot->y_rotation);
     float *x = &robot->obj->position.x;
     float *z = &robot->obj->position.z;
-
-    if (robot->collision & 0x01) {
-        handle_robot_collision(robot);
-        return;
-    }
 
     robot->steps -= 1;
     if (robot->steps == 0) {
@@ -120,32 +112,97 @@ void move_robot(uniciclo_t *robot) {
         return;
     }
 
-    float velocity = robot->vl * GetFrameTime();
-
-    *x += velocity * sinf(y_rotation);
-    *z += velocity * cosf(y_rotation);
+    *x += robot->vl * sinf(y_rotation);
+    *z += robot->vl * cosf(y_rotation);
 
     if (*x <= -8.7f) {
         *x = -8.7f;
-        COLLISION_DOWN(robot->collision);
+        COLLISION_DOWN(robot->config);
     }
     if (*x >= 8.7f) {
         *x = 8.7f;
-        COLLISION_UP(robot->collision);
+        COLLISION_UP(robot->config);
     }
     if (*z <= -4.7f) {
         *z = -4.7f;
-        COLLISION_LEFT(robot->collision);
+        COLLISION_LEFT(robot->config);
     }
     if (*z >= 4.7f) {
         *z = 4.7f;
-        COLLISION_RIGHT(robot->collision);
+        COLLISION_RIGHT(robot->config);
     }
 }
 
-void update_robot(uniciclo_t *robot) {
-    if (robot == NULL || robot->obj == NULL)
+void handle_shot(uniciclo_t *robot) {
+    float y_rotation = *(robot->y_rotation);
+    if (!CHECK_BIT(robot->config, SHOOTING)) {
+        SET_SHOOTING(robot->config);
+        // if (rotation_target > 0.0f) // si es menor a 0 significa que no se ha calculado el angulo
+        //     return;
+        robot->old_w = robot->w;
+        robot->old_y_rotation = y_rotation;
+        robot->old_vl = robot->vl;
+
+        robot->vl = 0.0f;
+        robot->w = 5.0f * GetFrameTime();
+
+        float rotation_target = get_target_angle(robot->obj->position, robot->target);
+        float angle_diff = get_angle_diff(y_rotation, rotation_target);
+        if (angle_diff < 0.0f) robot->w = -robot->w;
+
+        SET_ROTATING(robot->config);
+        SET_LAUNCHING(robot->config);
+    }
+
+    if (CHECK_BIT(robot->config, ROTATING)) {
+        if (fabsf(robot->y_rotation_expected - y_rotation) > 0.1f) // rotacion de acercamiento
+            return;
+
+        UNSET_ROTATING(robot->config);
+        *(robot->y_rotation) = rotation_target; // correcion de angulo
+        if (!CHECK_BIT(robot->config, LAUNCHING)) {
+            
+
+            UNSET_SHOOTING(robot->config);
+        }
+
+        // robot->y_rotation_expected = -1.0f;  // se resetea el angulo esperado
+    }
+
+    if (CHECK_BIT(robot->config, LAUNCHING)) {
+        robot->wait_for_shot -= GetFrameTime();
+        if (robot->wait_for_shot > 0) return;
+        robot->wait_for_shot = WAIT_TIME_FOR_SHOT;
+        printf("robot %s: disparando\n", robot->team.r == RED.r ? "rojo" : "azul");
+
+        // launch_ball(robot->ball);
+
+        UNSET_LAUNCHING(robot->config);
         return;
+    }
+
+    // rotar el robot al angulo original
+
+    robot->w = 5.0f * GetFrameTime();
+    float restore_angle = get_angle_diff(y_rotation, robot->old_y_rotation);
+
+    if (restore_angle < 0.0f) robot->w = -robot->w;
+
+    // robot->time_to_shot = get_random_float(5.0f, 10.0f);
+}
+
+void update_robot(uniciclo_t *robot) {
+    if (robot == NULL) return;
+
+    if (robot->time_to_shot > 0) robot->time_to_shot -= GetFrameTime();
+
+    if (CHECK_BIT(robot->config, SHOOTING) || robot->time_to_shot < 0) {
+        handle_shot(robot);
+        return;
+    }
+
+    if (CHECK_BIT(robot->config, COLLISION))
+        handle_robot_collision(robot);
 
     rotate_robot(robot);
     move_robot(robot);

@@ -23,11 +23,11 @@ void draw_world(Model *aro) {
     // aros
     DrawCubeV((Vector3){ 9.0f, 1.5f, 0.0f }, (Vector3){0.04f, 0.7f, 1.4f}, RED);
     DrawCubeV((Vector3){ 9.0f, 0.6f, 0.0f }, (Vector3){0.03f, 1.2f, 0.06f}, WHITE);
-    DrawModel(*aro, (Vector3){ 8.74f, 1.3f, 0.0f }, 1.0f, WHITE);
+    DrawModel(*aro, POS_RING_RED, 1.0f, WHITE);
 
     DrawCubeV((Vector3){ -9.0f, 1.5f, 0.0f }, (Vector3){0.04f, 0.7f, 1.4f}, BLUE);
     DrawCubeV((Vector3){ -9.0f, 0.6f, 0.0f }, (Vector3){0.03f, 1.2f, 0.06f}, WHITE);
-    DrawModel(*aro, (Vector3){ -8.74f, 1.3f, 0.0f }, 1.0f, WHITE);
+    DrawModel(*aro, POS_RING_BLUE, 1.0f, WHITE);
 }
 
 int main() {
@@ -42,20 +42,26 @@ int main() {
     Model aro_m = LoadModelFromMesh(aro);
     aro_m.transform = MatrixRotateX(90.0f * DEG2RAD);
 
-    camera.position = (Vector3){ 0.0f, 6.0f, 10.0f };
+    camera.position = POS_RING_BLUE;
     camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };
     camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
     camera.fovy = 80.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
     uniciclo_t **robots_red = (uniciclo_t **)malloc(sizeof(uniciclo_t *) * N_ROBOTS_PER_TEAM);
+#if !ONCE_TEAM
     uniciclo_t **robots_blue = (uniciclo_t **)malloc(sizeof(uniciclo_t *) * N_ROBOTS_PER_TEAM);
+#endif
     for (size_t i = 0; i < N_ROBOTS_PER_TEAM; i++) {
         robots_red[i] = create_robot((Vector3){0.0f, 0.0f, 0.0f}, RED);
+#if !ONCE_TEAM
         robots_blue[i] = create_robot((Vector3){0.0f, 0.0f, 0.0f}, BLUE);
+#endif
     }
 
     DisableCursor();
+
+    bool fixed_target_camera = false;
 
     SetTargetFPS(120);
     while (!WindowShouldClose()) {
@@ -68,11 +74,21 @@ int main() {
             camera.position.y -= 2.0f * GetFrameTime();
         }
 
+        if (IsKeyPressed(KEY_F)) {
+            fixed_target_camera = !fixed_target_camera;
+        }
+
+        if (fixed_target_camera) {
+            camera.target = robots_red[0]->obj->position;
+        }
+
         check_camera_collision(&camera);
 
         for (size_t i = 0; i < N_ROBOTS_PER_TEAM; i++) {
             update_robot(robots_red[i]);
+#if !ONCE_TEAM
             update_robot(robots_blue[i]);
+#endif
         }
 
         UpdateCamera(&camera, CAMERA_FIRST_PERSON);
@@ -86,7 +102,9 @@ int main() {
 
             for (size_t i = 0; i < N_ROBOTS_PER_TEAM; i++) {
                 draw_robot(robots_red[i]);
+#if !ONCE_TEAM
                 draw_robot(robots_blue[i]);
+#endif
             }
 
             EndMode3D();
@@ -98,12 +116,15 @@ int main() {
 
     for (size_t i = 0; i < N_ROBOTS_PER_TEAM; i++) {
         destroy_robot(robots_red[i]);
+#if !ONCE_TEAM
         destroy_robot(robots_blue[i]);
+#endif
     }
 
     free(robots_red);
+#if !ONCE_TEAM
     free(robots_blue);
-
+#endif
     UnloadModel(aro_m);
     CloseWindow();
 
