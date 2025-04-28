@@ -2,6 +2,7 @@
 #define ROBOT_H
 
 #include <frame.h>
+#include <ball.h>
 
 #include <raylib.h>
 #include <stdio.h>
@@ -43,11 +44,11 @@ typedef struct RobotUniciclo {
     float old_y_rotation;
     float vl;
     float old_vl;
-    size_t steps;
+    float steps;
     uint8_t config;
     float time_to_shot;
     float wait_for_shot;
-    void *ball;
+    ball_t *ball;
     Vector3 target;
     Color team;
 } uniciclo_t;
@@ -56,6 +57,8 @@ extern uniciclo_t* create_robot(Vector3 pos, Color team);
 extern void destroy_robot(uniciclo_t* robot);
 extern void update_robot(uniciclo_t* robot);
 extern void rotate_robot(uniciclo_t* robot);
+extern bool ready_robot_rotation(uniciclo_t *robot);
+extern void configure_robot_rotation(uniciclo_t *robot, float rotation_target);
 extern void move_robot(uniciclo_t* robot);
 extern void draw_robot(uniciclo_t *robot);
 extern float get_angle_diff(float current_angle, float new_angle);

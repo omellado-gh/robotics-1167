@@ -1,5 +1,5 @@
 #include <utils.h>
-
+#include <stdio.h>
 
 float get_angle_diff(float current_angle, float new_angle) {
     current_angle += ((2 * PI) * (float)(current_angle < 0)) - ((2 * PI) * (float)(current_angle > 2 * PI));
@@ -29,4 +29,32 @@ float get_target_angle(Vector3 position, Vector3 target) {
     float angle = atanf(relative_target.x / relative_target.z);
 
     return angle + sum;
+}
+
+
+float get_shot_velocity(float distance) {
+    return sqrtf(GRAVITY * distance);
+}
+
+float get_shot_angle(float distance, float velocity, float h) {
+
+    float gravity = -GRAVITY;
+    float solutions[2] = { 0 };
+
+    float a = (gravity * distance) / (2 * velocity * velocity);
+
+    float det = (h / (a * distance)) - 1 + (1 / (4 * a * a));
+
+    if (det < 0) {
+        printf("Error no hay solucion real\n");
+        return -1.0f;
+    }
+    float b = -1 / (2 * a);
+    float c = sqrtf(det);
+    solutions[0] = atanf(b + c);
+    solutions[1] = atanf(b - c);
+
+    if (solutions[0] < solutions[1]) return solutions[0];
+
+    return solutions[1];
 }

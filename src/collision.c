@@ -30,9 +30,6 @@ void check_camera_collision(Camera *camera) {
     }
 }
 
-void handle_robot_collision(uniciclo_t *robot) {
-    if (CHECK_BIT(robot->config, SHOOTING)) return;
-    robot->vl = 0.0f;
 /*
 bits del robot->config
       0: check collision
@@ -43,19 +40,16 @@ bits del robot->config
       5: set if is rotating
       6: set if is shooting
 */
-    if (CHECK_BIT(robot->config, ROTATING)) {
-        float y_rotation = *(robot->y_rotation);
-        if (y_rotation < 0)      y_rotation += 2 * PI;
-        if (y_rotation > 2 * PI) y_rotation -= 2 * PI;
+void handle_robot_collision(uniciclo_t *robot) {
+    if (CHECK_BIT(robot->config, SHOOTING)) return;
 
-        if (fabsf(robot->y_rotation_expected - y_rotation) > 0.1f)
-            return;
-        *(robot->y_rotation) = robot->y_rotation_expected;
-        robot->y_rotation_expected = -1.0f;
+    if (CHECK_BIT(robot->config, ROTATING)) {
+
+        if (!ready_robot_rotation(robot)) return;
+
         NO_COLLISION(robot->config);
         robot->vl = 3.0f;
-        robot->w = 0.0f;
-        robot->steps = 50;
+        robot->steps = 0.5f;
         return;
     }
 
@@ -72,11 +66,6 @@ bits del robot->config
         else       new_angle = 0.0f;
     }
     new_angle *= DEG2RAD; // se convierte a radianes
-    SET_ROTATING(robot->config);
 
-    robot->y_rotation_expected = new_angle;
-
-    float angle_diff = get_angle_diff(*(robot->y_rotation), new_angle);
-
-    robot->w = (angle_diff / fabsf(angle_diff)) * 5.0f * GetFrameTime();
+    configure_robot_rotation(robot, new_angle);
 }

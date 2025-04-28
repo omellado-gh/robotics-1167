@@ -4,7 +4,11 @@
 #include <graphics.h>
 
 typedef struct Ball {
-    int value;
+    Vector3 position;
+    Vector3 velocity;
+    bool visible;
+    sphere_t *sphere;
 } ball_t;
 
+extern ball_t* create_ball(Vector3 position);
 #endif
