@@ -52,6 +52,9 @@ uniciclo_t* create_robot(Vector3 pos, Color color) {
     else target = POS_RING_RED;
     frame_t *frame = create_frame(pos, (Vector3){0.0f, 0.0f, 0.0f});
     generate_frame(frame, color);
+
+    ball_t *ball = create_ball();
+
     *robot = (uniciclo_t) {
         .obj = frame,
         .vl = 0.0f,
@@ -62,6 +65,7 @@ uniciclo_t* create_robot(Vector3 pos, Color color) {
         .time_to_shot = get_random_float(5.0f, 10.0f),
         .wait_for_shot = WAIT_TIME_FOR_SHOT,
         .target = target,
+        .ball = ball,
         .config = 0,
         .w = 0.0f
     };
@@ -77,6 +81,7 @@ uniciclo_t* create_robot(Vector3 pos, Color color) {
 
 void destroy_robot(uniciclo_t* robot) {
     destroy_frame(robot->obj);
+    destroy_ball(robot->ball);
     free(robot);
 }
 
@@ -86,6 +91,7 @@ void draw_robot(uniciclo_t *robot) {
         return;
 
     draw_frame(robot->obj);
+    draw_ball(robot->ball);
 }
 
 void rotate_robot(uniciclo_t *robot) {
@@ -177,7 +183,7 @@ void launch_ball(uniciclo_t *robot) {
     velocity_vector.z = velocity * cosf(angle) * cosf(y_rotation);
 
     robot->ball->visible = true;
-    robot->ball->position = robot->obj->position;
+    *(robot->ball->position) = robot->obj->position;
     robot->ball->velocity = velocity_vector;
 }
 
