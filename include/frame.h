@@ -6,11 +6,10 @@
 #include <raylib.h>
 #include <stdio.h>
 
-// a simple visual python frame implementation
 typedef struct Frame {
-    Vector3 position;  // 3D coordinates
-    Vector3 rotation; // angle in radians
-    linked_list_t *entities; // list of models or sub_frames
+    Vector3 position;
+    Vector3 rotation;
+    linked_list_t *entities;
 } frame_t;
 
 extern frame_t *create_frame(Vector3 position, Vector3 rotation);

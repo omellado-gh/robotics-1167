@@ -4,26 +4,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// just to use with dynamic memory
 linked_list_t* create_linked_list() {
     linked_list_t* list = (linked_list_t*)malloc(sizeof(linked_list_t));
-    if (list == NULL) {
-        printf("Memory allocation failed\n");
-        exit(1);
-    }
+    if (list == NULL) exit(1);
     list->head = NULL;
     list->tail = NULL;
     list->size = 0;
     return list;
 }
 
-// Function to create a new node
 node_t* create_node(void *data) {
     node_t* new_node = (node_t*)malloc(sizeof(node_t));
-    if (new_node == NULL) {
-        printf("Memory allocation failed\n");
-        exit(1);
-    }
+    if (new_node == NULL) exit(1);
     new_node->data = data;
     new_node->next = NULL;
     new_node->prev = NULL;
@@ -31,11 +23,8 @@ node_t* create_node(void *data) {
 }
 
 void append(linked_list_t *l, void *data) {
-    // l is a list
-    if (l == NULL) {
-        printf("List is NULL\n");
-        return;
-    }
+    if (l == NULL) return;
+
     node_t* new_node = create_node(data);
     l->size++;
     if (l->head == NULL) {
@@ -73,16 +62,10 @@ void destroy_node(node_t *node) {
     free(node);
 }
 
-// Function to delete a node by value
 void delete_at(linked_list_t* l, size_t position) {
-    if (l == NULL) {
-        printf("List is NULL\n");
-        return;
-    }
-    if (position >= l->size) {
-        printf("Position out of bounds\n");
-        return;
-    }
+    if (l == NULL) return;
+    if (position >= l->size) return;
+
     node_t *current = l->head;
     size_t i = 0;
     while (current != NULL || i != position) {
@@ -90,10 +73,7 @@ void delete_at(linked_list_t* l, size_t position) {
         current = current->next;
     }
 
-    if (current == NULL) {
-        printf("Position out of bounds\n");
-        return;
-    }
+    if (current == NULL) return;
 
     node_t *del_node = current;
     node_t *prev_node = current->prev;
@@ -105,11 +85,8 @@ void delete_at(linked_list_t* l, size_t position) {
     destroy_node(del_node);
 }
 
-// Function to free and destroy the entire linked list
 void destroy_linked_list(linked_list_t *list) {
-    if (list == NULL) {
-        return;
-    }
+    if (list == NULL) return;
 
     node_t* current = list->head;
     while (current != NULL) {

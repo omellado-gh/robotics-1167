@@ -10,17 +10,12 @@
 #include <raymath.h>
 
 void draw_world(Model *aro) {
-    // cancha
     DrawCubeV((Vector3){ 0.0f, -0.05f, 0.0f }, (Vector3){CANCHA_HEIGHT + 0.2f, 0.03f, CANCHA_WIDTH + 0.2f}, RED);
     DrawCubeV((Vector3){ 0.0f, -0.025f, 0.0f }, (Vector3){CANCHA_HEIGHT, 0.05f, CANCHA_WIDTH}, GRAY);
     DrawPlane((Vector3){0.0f, 0.0001f, 0.0f}, (Vector2){0.03f, 9.8f}, WHITE);
     DrawCylinder((Vector3){0.0f, -0.099f, 0.0f}, 0.5f, 0.5f, 0.1f, 32, RED);
     DrawCylinder((Vector3){0.0f, -0.098f, 0.0f}, 0.2f, 0.5f, 0.1f, 32, WHITE);
 
-    // paredes
-    DrawCubeV((Vector3){ (CANCHA_HEIGHT / 2.0f) + 0.1f, 0.2f - 0.05f, 0.0f }, (Vector3){0.04f, 0.4f, CANCHA_WIDTH + 0.2f}, GRAY);
-
-    // aros
     DrawCubeV((Vector3){ 9.0f, 1.5f, 0.0f }, (Vector3){0.04f, 0.7f, 1.4f}, RED);
     DrawCubeV((Vector3){ 9.0f, 0.6f, 0.0f }, (Vector3){0.03f, 1.2f, 0.06f}, WHITE);
     DrawModel(*aro, POS_RING_RED, 1.0f, WHITE);
@@ -31,17 +26,15 @@ void draw_world(Model *aro) {
 }
 
 int main() {
-    // srand((unsigned int)time(NULL));
-    srand((unsigned int)1234);
+    srand((unsigned int)time(NULL));
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Dron");
 
-    Camera3D camera = { 0 };
-    // generar el modelo de un aro
     Mesh aro = GenMeshTorus(0.001f, 0.5f, 32, 32);
     Model aro_m = LoadModelFromMesh(aro);
     aro_m.transform = MatrixRotateX(90.0f * DEG2RAD);
 
+    Camera3D camera = { 0 };
     camera.position = POS_RING_BLUE;
     camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };
     camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
@@ -76,6 +69,10 @@ int main() {
             robot_index++;
             if (robot_index >= N_ROBOTS_PER_TEAM) robot_index = 0;
         }
+        if (IsKeyPressed(KEY_LEFT)) {
+            robot_index--;
+            if (robot_index >= N_ROBOTS_PER_TEAM) robot_index = N_ROBOTS_PER_TEAM - 1;
+        }
 
         if (fixed_target_camera) {
             if (team == 'r') camera.target = robots_red[robot_index]->obj->position;
@@ -108,8 +105,12 @@ int main() {
             }
 
             EndMode3D();
+            const char *info_robot = TextFormat("Robot: %zu, equipo: %s\nCamara fijada: %s",
+                robot_index, 
+                team == 'r' ? "rojo" : "azul", 
+                fixed_target_camera ? "si" : "no");
 
-            // Draw fps in the top right corner
+            DrawText(info_robot, 10, 10, 20, WHITE);
             DrawFPS(SCREEN_WIDTH - 100, 10);
         EndDrawing();
     }

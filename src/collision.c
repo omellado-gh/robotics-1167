@@ -5,41 +5,25 @@
 #include <raymath.h>
 
 void check_camera_collision(Camera *camera) {
-
-    if (camera->position.y < 0.0f) {
+    if (camera->position.y < 0.0f)
         camera->position.y = 0.0f;
-    }
-    if (camera->position.y > WORLD_HEIGHT) {
+
+    if (camera->position.y > WORLD_HEIGHT)
         camera->position.y = WORLD_HEIGHT;
-    }
 
-    if (camera->position.x > WORLD_HEIGHT) {
+    if (camera->position.x > WORLD_HEIGHT)
         camera->position.x = WORLD_HEIGHT;
-    }
 
-    if (camera->position.x < -WORLD_HEIGHT) {
+    if (camera->position.x < -WORLD_HEIGHT)
         camera->position.x = -WORLD_HEIGHT;
-    }
 
-    if (camera->position.z > WORLD_HEIGHT) {
+    if (camera->position.z > WORLD_HEIGHT)
         camera->position.z = WORLD_HEIGHT;
-    }
 
-    if (camera->position.z < -WORLD_HEIGHT) {
+    if (camera->position.z < -WORLD_HEIGHT)
         camera->position.z = -WORLD_HEIGHT;
-    }
 }
 
-/*
-bits del robot->config
-      0: check collision
-      1: if set collision up else collision down
-      2: if set collision right else collision left
-      3: check collision X
-      4: check collision Z
-      5: set if is rotating
-      6: set if is shooting
-*/
 void handle_robot_collision(uniciclo_t *robot) {
     if (CHECK_BIT(robot->config, SHOOTING)) return;
 
@@ -65,7 +49,7 @@ void handle_robot_collision(uniciclo_t *robot) {
         if (sense) new_angle = 180.0f;
         else       new_angle = 0.0f;
     }
-    new_angle *= DEG2RAD; // se convierte a radianes
+    new_angle *= DEG2RAD;
 
     configure_robot_rotation(robot, new_angle);
 }

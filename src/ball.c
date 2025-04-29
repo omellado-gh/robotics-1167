@@ -4,10 +4,8 @@
 #include <stdlib.h>
 ball_t* create_ball() {
     ball_t *ball = (ball_t *)malloc(sizeof(ball_t));
-    if (ball == NULL) {
-        fprintf(stderr, "Error allocating memory for ball\n");
+    if (ball == NULL)
         return NULL;
-    }
 
     ball->sphere = create_sphere(RADIUS_BALL, (Vector3){ 0.0f, 0.0f, 0.0f }, (Vector3){ 0.0f, 0.0f, 0.0f }, WHITE);
     ball->position = &(ball->sphere->object.position);

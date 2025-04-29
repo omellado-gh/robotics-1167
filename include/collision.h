@@ -5,18 +5,6 @@
 
 #include <raylib.h>
 
-/*
-bits del robot->config
-      0: check collision
-      1: if set collision up else collision down
-      2: if set collision right else collision left
-      3: check collision X
-      4: check collision Z
-      5: set if is rotating
-      6: set if is shooting
-      7: set if is launching
-*/
-
 #define COLLISION         (uint8_t)0
 #define COLLISION_X       (uint8_t)1
 #define COLLISION_Z       (uint8_t)2
