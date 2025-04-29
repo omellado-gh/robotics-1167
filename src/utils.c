@@ -33,7 +33,7 @@ float get_target_angle(Vector3 position, Vector3 target) {
 
 
 float get_shot_velocity(float distance) {
-    return sqrtf(GRAVITY * distance);
+    return distance + 5 + (distance * distance * 0.00001f);
 }
 
 float get_shot_angle(float distance, float velocity, float h) {
@@ -54,7 +54,7 @@ float get_shot_angle(float distance, float velocity, float h) {
     solutions[0] = atanf(b + c);
     solutions[1] = atanf(b - c);
 
-    if (solutions[0] < solutions[1]) return solutions[0];
+    if (solutions[0] > solutions[1]) return solutions[0];
 
     return solutions[1];
 }

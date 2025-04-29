@@ -6,6 +6,8 @@
 typedef struct Ball {
     Vector3 *position;
     Vector3 velocity;
+    float fly_time;
+    float t;
     bool visible;
     sphere_t *sphere;
 } ball_t;

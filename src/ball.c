@@ -13,6 +13,7 @@ ball_t* create_ball() {
     ball->position = &(ball->sphere->object.position);
     ball->velocity = (Vector3){ 0.0f, 0.0f, 0.0f };
     ball->visible = false;
+    ball->t = 0.0f;
 
     return ball;
 }
@@ -28,13 +29,23 @@ void draw_ball(ball_t *ball) {
 }
 
 void update_ball(ball_t *ball) {
-    float dt = GetFrameTime();
-
     if (!ball->visible) return;
+
+    float dt = GetFrameTime();
+    ball->t += dt;
+
+    if (ball->t > ball->fly_time) {
+        ball->visible = false;
+        ball->t = 0.0f;
+        return;
+    }
 
     Vector3 *position = ball->position;
 
     position->x += ball->velocity.x * dt;
     position->z += ball->velocity.z * dt;
+
+    ball->velocity.y += -GRAVITY * dt;
+    position->y += ball->velocity.y * dt;
     
 }

@@ -172,16 +172,21 @@ void launch_ball(uniciclo_t *robot) {
 
     float h = robot->target.y;
     float distance = Vector3Distance(robot->obj->position, target);
+    printf("distance: %f\n", distance);
     float velocity = get_shot_velocity(distance);
+    printf("velocity: %f\n", velocity);
     float angle = get_shot_angle(distance, velocity, h);
+    printf("angle: %f\n", angle * RAD2DEG);
 
     float y_rotation = *(robot->y_rotation);
 
     Vector3 velocity_vector = { 0 };
+    float horizontal_velocity = velocity * cosf(angle);
     velocity_vector.y = velocity * sinf(angle),
-    velocity_vector.x = velocity * cosf(angle) * sinf(y_rotation);
-    velocity_vector.z = velocity * cosf(angle) * cosf(y_rotation);
+    velocity_vector.x = horizontal_velocity * sinf(y_rotation);
+    velocity_vector.z = horizontal_velocity * cosf(y_rotation);
 
+    robot->ball->fly_time = (distance / horizontal_velocity) + 0.1f;
     robot->ball->visible = true;
     *(robot->ball->position) = robot->obj->position;
     robot->ball->velocity = velocity_vector;
@@ -235,4 +240,6 @@ void update_robot(uniciclo_t *robot) {
 
     rotate_robot(robot);
     move_robot(robot);
+    if (!robot->ball->visible) return;
+    update_ball(robot->ball);
 }
