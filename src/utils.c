@@ -33,7 +33,7 @@ float get_target_angle(Vector3 position, Vector3 target) {
 
 
 float get_shot_velocity(float distance) {
-    return distance + 5 + (distance * distance * 0.00001f);
+    return distance + 5.0f + (distance * distance * 0.0000000001f);
 }
 
 float get_shot_angle(float distance, float velocity, float h) {
@@ -46,7 +46,7 @@ float get_shot_angle(float distance, float velocity, float h) {
     float det = (h / (a * distance)) - 1 + (1 / (4 * a * a));
 
     if (det < 0) {
-        printf("Error no hay solucion real\n");
+        printf("\n---------------------------\nError no hay solucion real\n---------------------------\n");
         return -1.0f;
     }
     float b = -1 / (2 * a);

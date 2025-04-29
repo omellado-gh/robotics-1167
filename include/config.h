@@ -15,7 +15,7 @@
 #define POS_RING_RED  ((Vector3){  8.74f, 1.3f, 0.0f })
 #define POS_RING_BLUE ((Vector3){ -8.74f, 1.3f, 0.0f })
 
-#define N_ROBOTS_PER_TEAM 5
+#define N_ROBOTS_PER_TEAM 100
 #define RADIUS_BALL 0.1f
 
 #define ONCE_TEAM 0

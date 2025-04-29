@@ -186,7 +186,7 @@ void launch_ball(uniciclo_t *robot) {
     velocity_vector.x = horizontal_velocity * sinf(y_rotation);
     velocity_vector.z = horizontal_velocity * cosf(y_rotation);
 
-    robot->ball->fly_time = (distance / horizontal_velocity) + 0.1f;
+    robot->ball->fly_time = (distance / horizontal_velocity) + 0.01f;
     robot->ball->visible = true;
     *(robot->ball->position) = robot->obj->position;
     robot->ball->velocity = velocity_vector;

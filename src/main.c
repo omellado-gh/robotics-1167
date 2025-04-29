@@ -62,24 +62,24 @@ int main() {
     DisableCursor();
 
     bool fixed_target_camera = false;
+    size_t robot_index = 0;
+    char team = 'r';
 
     SetTargetFPS(120);
     while (!WindowShouldClose()) {
 
-        if (IsKeyDown(KEY_SPACE)) {
-            camera.position.y += 2.0f * GetFrameTime();
-        }
-
-        if (IsKeyDown(KEY_LEFT_SHIFT)) {
-            camera.position.y -= 2.0f * GetFrameTime();
-        }
-
-        if (IsKeyPressed(KEY_F)) {
-            fixed_target_camera = !fixed_target_camera;
+        if (IsKeyDown(KEY_SPACE)) camera.position.y += 2.0f * GetFrameTime();
+        if (IsKeyDown(KEY_LEFT_SHIFT)) camera.position.y -= 2.0f * GetFrameTime();
+        if (IsKeyPressed(KEY_F)) fixed_target_camera = !fixed_target_camera;
+        if (IsKeyPressed(KEY_T)) team = (team == 'r') ? 'b' : 'r';
+        if (IsKeyPressed(KEY_RIGHT)) {
+            robot_index++;
+            if (robot_index >= N_ROBOTS_PER_TEAM) robot_index = 0;
         }
 
         if (fixed_target_camera) {
-            camera.target = robots_red[0]->obj->position;
+            if (team == 'r') camera.target = robots_red[robot_index]->obj->position;
+            if (team == 'b') camera.target = robots_blue[robot_index]->obj->position;
         }
 
         check_camera_collision(&camera);
