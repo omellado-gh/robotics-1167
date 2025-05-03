@@ -17,7 +17,7 @@
 
 #define N_ROBOTS_PER_TEAM 10
 #define RADIUS_BALL 0.1f
-#define GREATER 1
+#define GREATER 0
 
 #define ONCE_TEAM 0
 

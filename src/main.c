@@ -56,11 +56,13 @@ int main() {
 
     bool fixed_target_camera = false;
     size_t robot_index = 0;
+    bool pause = false;
     char team = 'r';
 
     SetTargetFPS(120);
     while (!WindowShouldClose()) {
 
+        if (IsKeyPressed(KEY_P)) pause = !pause;
         if (IsKeyDown(KEY_SPACE)) camera.position.y += 2.0f * GetFrameTime();
         if (IsKeyDown(KEY_LEFT_SHIFT)) camera.position.y -= 2.0f * GetFrameTime();
         if (IsKeyPressed(KEY_F)) fixed_target_camera = !fixed_target_camera;
@@ -81,11 +83,13 @@ int main() {
 
         check_camera_collision(&camera);
 
-        for (size_t i = 0; i < N_ROBOTS_PER_TEAM; i++) {
-            update_robot(robots_red[i]);
+        if (!pause) {
+            for (size_t i = 0; i < N_ROBOTS_PER_TEAM; i++) {
+                update_robot(robots_red[i]);
 #if !ONCE_TEAM
-            update_robot(robots_blue[i]);
+                update_robot(robots_blue[i]);
 #endif
+            }
         }
 
         UpdateCamera(&camera, CAMERA_FIRST_PERSON);
